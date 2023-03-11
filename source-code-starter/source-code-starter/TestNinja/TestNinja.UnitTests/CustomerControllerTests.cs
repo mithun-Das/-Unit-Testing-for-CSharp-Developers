@@ -15,10 +15,10 @@ namespace TestNinja.UnitTests
             var result = controller.GetCustomer(0);
 
             // NotFound
-            //Assert.That(result, Is.TypeOf<NotFound>());
+            Assert.That(result, Is.TypeOf<NotFound>());
 
             // NotFound or one of it's derivatives
-            Assert.That(result, Is.InstanceOf<NotFound>());
+            //Assert.That(result, Is.InstanceOf<NotFound>());
         }
 
         [Test]
