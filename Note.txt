@@ -3,4 +3,7 @@
 
 -> public VideoService(IFileReader fileReader = null)
 
-   Optional parameter	
+   Optional parameter
+
+-> Dependency Injection Framework
+   NInject, autofac
