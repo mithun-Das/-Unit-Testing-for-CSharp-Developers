@@ -15,3 +15,5 @@
 
 -> We also have a Verify method. And with this we can verify 
    any given method is called with the right arguments or not.
+
+-> use mocks, but just for removing external resources from your unit tests.
