@@ -9,3 +9,9 @@
    NInject, autofac
 
 -> Mocking Frameworks
+
+-> Moq documentation
+   https://documentation.help/Moq/
+
+-> We also have a Verify method. And with this we can verify 
+   any given method is called with the right arguments or not.
