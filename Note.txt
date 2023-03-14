@@ -17,3 +17,18 @@
    any given method is called with the right arguments or not.
 
 -> use mocks, but just for removing external resources from your unit tests.
+
+-> Writing unit and integration tests is the job of a software developer.
+
+-> No one cares how good of a coder or how intelligent you are 
+   if you cannot work with others in a professional manner.
+
+->  So, writing unit and integration tests is your job as a software developer.
+    End-to-End tests are a different story. Sometimes they're written by
+    developers, other times they're written by test engineers.
+    So a test engineer doesn't care how you have implemented a given feature.
+    They don't care about your classes, and methods, and parameters,
+    they test the application at a high level, like an end user,
+    so, they run the application and test it manually, or
+    they can write automated tests that simulate a real user.
+    Either way, they don't care about the internal implementation.
