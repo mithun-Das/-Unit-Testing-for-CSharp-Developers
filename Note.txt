@@ -32,3 +32,21 @@
     so, they run the application and test it manually, or
     they can write automated tests that simulate a real user.
     Either way, they don't care about the internal implementation.
+
+
+->      public void DownloadInstaller_WithInValidArgs_ReturnFalse(string customerName, string installerName)
+        {
+           _fileDownloader.Setup(x => x.DownloadFile("", "")).Throws<WebException>();
+            var result = _installerHelper.DownloadInstaller(customerName, installerName);
+
+            Assert.That(result, Is.False);
+        }
+
+	This test case will fail because argument of a mock setup must match with the test call
+	So setup argument in the mock must match with the arguments of test call
+
+
+-> One thing to keep in mind that in unit testing we are not testing the external resources,
+   testing external resources is part of our integration testing.
+
+   Thats why we needed a mock for external resources and programmed it's behaviour.
