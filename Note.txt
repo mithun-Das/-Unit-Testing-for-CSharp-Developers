@@ -50,3 +50,6 @@
    testing external resources is part of our integration testing.
 
    Thats why we needed a mock for external resources and programmed it's behaviour.
+
+
+-> SOC
