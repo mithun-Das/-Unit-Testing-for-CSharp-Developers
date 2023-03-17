@@ -40,7 +40,17 @@ namespace TestNinja.UnitTests.Mocking
         }
 
         [Test]
-        public void BookingStartsBeforeAndFinishesInMiddleOfAnExistingBooking_ReturnEmptyString()
+        public void BookingStartsAndFinishesAfterExistingBooking_ReturnEmptyString()
+        {
+            var booking = new Booking { Id = 1, ArrivalDate = ArriveOn(2023, 3, 29), DepartureDate = DepartedOn(2023, 3, 30) };
+
+            var result = BookingHelper.OverlappingBookingsExist(booking, _bookingRepository.Object);
+
+            Assert.That(result, Is.EqualTo(string.Empty));
+        }
+
+        [Test]
+        public void BookingStartsBeforeAndFinishesInMiddleOfAnExistingBooking_ReturnReference()
         {
             var booking = new Booking { Id = 1, ArrivalDate = ArriveOn(2023, 3, 17), DepartureDate = DepartedOn(2023, 3, 23) };
 
@@ -50,7 +60,7 @@ namespace TestNinja.UnitTests.Mocking
         }
 
         [Test]
-        public void BookingStartsBeforeAndFinishesAfterOfAnExistingBooking_ReturnEmptyString()
+        public void BookingStartsBeforeAndFinishesAfterOfAnExistingBooking_ReturnReference()
         {
             var booking = new Booking { Id = 1, ArrivalDate = ArriveOn(2023, 3, 17), DepartureDate = DepartedOn(2023, 3, 28) };
 
@@ -60,9 +70,19 @@ namespace TestNinja.UnitTests.Mocking
         }
 
         [Test]
-        public void BookingStartsAfterExistingBookingAndFinishesAfterOfAnExistingBooking_ReturnEmptyString()
+        public void BookingStartsInMiddleAndFinishesAfterOfAnExistingBooking_ReturnReference()
         {
             var booking = new Booking { Id = 1, ArrivalDate = ArriveOn(2023, 3, 20), DepartureDate = DepartedOn(2023, 3, 28) };
+
+            var result = BookingHelper.OverlappingBookingsExist(booking, _bookingRepository.Object);
+
+            Assert.That(result, Is.EqualTo(_overlappedBookings.ElementAt(0).Reference));
+        }
+
+        [Test]
+        public void BookingStartsAndFinishesInMiddleOfAnExistingBooking_ReturnReference()
+        {
+            var booking = new Booking { Id = 1, ArrivalDate = ArriveOn(2023, 3, 23), DepartureDate = DepartedOn(2023, 3, 24) };
 
             var result = BookingHelper.OverlappingBookingsExist(booking, _bookingRepository.Object);
 
