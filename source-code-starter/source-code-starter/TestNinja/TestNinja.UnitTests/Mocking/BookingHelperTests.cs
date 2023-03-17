@@ -25,6 +25,8 @@ namespace TestNinja.UnitTests.Mocking
                 new Booking{ Id = 3, ArrivalDate = ArriveOn(2023, 3, 24), DepartureDate = DepartedOn(2023, 3, 27), Reference = "ID-3"}
             
             }.AsQueryable();
+
+            _bookingRepository.Setup(x => x.GetActiveBookings(1)).Returns(_overlappedBookings);
         }
 
         [Test]
@@ -32,7 +34,45 @@ namespace TestNinja.UnitTests.Mocking
         {
             var booking = new Booking { Id = 1, ArrivalDate = ArriveOn(2023, 3, 17), DepartureDate = DepartedOn(2023, 3, 22) };
 
-            _bookingRepository.Setup(x => x.GetActiveBookings(booking.Id)).Returns(_overlappedBookings);
+            var result = BookingHelper.OverlappingBookingsExist(booking, _bookingRepository.Object);
+
+            Assert.That(result, Is.EqualTo(string.Empty));
+        }
+
+        [Test]
+        public void BookingStartsBeforeAndFinishesInMiddleOfAnExistingBooking_ReturnEmptyString()
+        {
+            var booking = new Booking { Id = 1, ArrivalDate = ArriveOn(2023, 3, 17), DepartureDate = DepartedOn(2023, 3, 23) };
+
+            var result = BookingHelper.OverlappingBookingsExist(booking, _bookingRepository.Object);
+
+            Assert.That(result, Is.EqualTo(_overlappedBookings.ElementAt(0).Reference));
+        }
+
+        [Test]
+        public void BookingStartsBeforeAndFinishesAfterOfAnExistingBooking_ReturnEmptyString()
+        {
+            var booking = new Booking { Id = 1, ArrivalDate = ArriveOn(2023, 3, 17), DepartureDate = DepartedOn(2023, 3, 28) };
+
+            var result = BookingHelper.OverlappingBookingsExist(booking, _bookingRepository.Object);
+
+            Assert.That(result, Is.EqualTo(_overlappedBookings.ElementAt(0).Reference));
+        }
+
+        [Test]
+        public void BookingStartsAfterExistingBookingAndFinishesAfterOfAnExistingBooking_ReturnEmptyString()
+        {
+            var booking = new Booking { Id = 1, ArrivalDate = ArriveOn(2023, 3, 20), DepartureDate = DepartedOn(2023, 3, 28) };
+
+            var result = BookingHelper.OverlappingBookingsExist(booking, _bookingRepository.Object);
+
+            Assert.That(result, Is.EqualTo(_overlappedBookings.ElementAt(0).Reference));
+        }
+
+        [Test]
+        public void BookingCancelled_ReturnEmptyString()
+        {
+            var booking = new Booking { Id = 1, Status = "Cancelled" };
 
             var result = BookingHelper.OverlappingBookingsExist(booking, _bookingRepository.Object);
 
