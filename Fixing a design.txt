@@ -1,0 +1,69 @@
+
+-> we have two types of functions, query functions that returns
+   some kind of value, and command functions that carry out a task.
+
+ In this case, what kind of function do you think
+
+SendStatementEmails is? Is it a query function or
+
+is it a command function? Well it's a command function, that is also
+
+returning some value, a boolean, right? But its main
+
+task is to perform some action, and that is
+
+saving the statement and emailing it to the housekeeper.
+
+So, to test the outcome of this method, we should have
+
+1 or. more unit tests for the value it returns, maybe
+
+in some conditions it returns true, in other conditions it returns
+
+false. Also, because it's a command function
+
+we should make sure that this method carries out the
+
+tasks it's supposed to do. So in this case, we should have
+
+a bunch of interaction tests to make sure that this
+
+object, this housekeeper helper object, talks to
+
+other objects like statementGenerator, and emailSender
+
+properly. So interaction tests. Now, it's easier
+
+to start with state-based tests. So we want to write
+
+unit tests to make sure that this unit test returns the right
+
+value. Now look at this implementation, the only way to
+
+exit this method is here, return true.
+
+So no matter what, this method is always returning true
+
+there is nowhere in this code, where we are returning
+
+false. So there is really no value for writing such unit tests.
+
+And this makes me think this method would be better to
+
+define as void.
+
+
+-------------------> An Alternative Solution <-----------------------
+
+In the last lecture, I argued that the return type of this method should be void because it always returns true.
+
+Later, however, I realized that it would actually be better to keep the return type as boolean and 
+write a unit test for the scenario where the download fails. 
+In that test, we assert that the method under test should return false.
+
+Obviously, this test will fail because the method under test always returns true. 
+This is an indication of a bug in the production code and our unit test helps us find it.
+
+This is another case where you should think of your methods as block boxes when unit testing them.
+Don’t write tests based on the existing implementation because the exiting implementation may be incomplete and/or have a bug.
+Treat the method under test as a black box, give it different inputs and verify that the outcome is correct. 
