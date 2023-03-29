@@ -2,14 +2,14 @@ using System;
 
 namespace TestNinja.Mocking
 {
-    public class HousekeeperHelper
+    public class HousekeeperService
     {
         private readonly IStatementSaver _statementSaver;
         private readonly IEmailService _emailService;
         private readonly IHouseKeeperRepository _houseKeeperRepository;
         private readonly IXtraMessageBox _xtraMessageBox;
 
-        public HousekeeperHelper(IHouseKeeperRepository houseKeeperRepository, 
+        public HousekeeperService(IHouseKeeperRepository houseKeeperRepository, 
                                 IStatementSaver statementSaver, 
                                 IEmailService emailService,
                                 IXtraMessageBox xtraMessageBox
@@ -21,8 +21,7 @@ namespace TestNinja.Mocking
             _xtraMessageBox = xtraMessageBox;
         }
 
-        public bool SendStatementEmails(DateTime statementDate, 
-            IHouseKeeperRepository houseKeeperRepository, IEmailService emailService)
+        public bool SendStatementEmails(DateTime statementDate)
         {
             var housekeepers = _houseKeeperRepository.GetHousekeepers();
 
@@ -48,6 +47,8 @@ namespace TestNinja.Mocking
                 {
                     _xtraMessageBox.Show(e.Message, string.Format("Email failure: {0}", emailAddress),
                         MessageBoxButtons.OK);
+
+                    return false;
                 }
             }
 

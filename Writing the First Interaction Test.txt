@@ -1,0 +1,21 @@
+
+-> I told you that application services are responsible for orchestration. They do high level jobs.
+   And here this class is a perfect example of an application service. Because this method is orchestrating
+   a few different things. It's getting housekeeper records from the database, and for each housekeeper is generating
+   a statement, and also emailing that statement to the Housekeeper. So this is all about orchestration.
+
+
+-> So, as part of this unit testing
+  journey, we started with a helper class with a bunch of
+  static methods. We moved away from that design, now we have
+  a proper application service, HouseKeeperService.
+  And we also have better separation of concerns.
+  So earlier, all this code for sending emails or generating
+  statements was implemented as private static
+  methods in this class. This violates the single  responsibility principle. Because sending emails is an
+  entirely different concern. It shouldn't be implemented as a private
+  static method in this class. The same is true
+  for generating statements. So with this design,
+  we put the code where it belongs. We have proper
+  separation of concerns. And also our class is loosely coupled
+  and testable. Because we are programming against interfaces.
