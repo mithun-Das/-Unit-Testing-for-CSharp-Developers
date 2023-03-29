@@ -1,0 +1,18 @@
+
+-> As I told you before, when writing unit tests,
+
+  we should always look at the method of a test like a black
+
+  box. So you shouldn't really write line by line of this code,
+
+  and write unit tests based on this implementation, because its possible that
+
+  this implementation has a problem, however, in this case
+
+  because I'm not familiar with the domain of this application
+
+  I have to rely on this implementation. So let's see what's happening
+
+
+-> _statementSaver.Verify(x => x.SaveStatement(_housekeeper.Oid, _housekeeper.FullName, _statementDate),
+                Times.Never);

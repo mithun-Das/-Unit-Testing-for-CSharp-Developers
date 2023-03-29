@@ -21,6 +21,7 @@ namespace TestNinja.UnitTests.Mocking
         private HousekeeperService _housekeeperHelper;
         private DateTime _statementDate = new DateTime(2023, 1, 1);
         private string _fileName = "File Testing - 1";
+        private Housekeeper _housekeeper;
 
         [SetUp]
         public void Setup()
@@ -35,10 +36,10 @@ namespace TestNinja.UnitTests.Mocking
                                             _mailService.Object,
                                             _xtraMessageBox.Object);
 
+            _housekeeper = new Housekeeper { Oid = 1, Email = "abc@gmail.com", FullName = "Mithun Das", StatementEmailBody = "Test - 1" };
             _houseKeeperList = new List<Housekeeper>
             {
-                new Housekeeper { Oid = 1, Email="abc@gmail.com", FullName="Mithun Das", StatementEmailBody = "Test - 1" }
-            
+                _housekeeper
             }.AsQueryable();
 
             _houseKeeperRepository.Setup(x => x.GetHousekeepers()).Returns(_houseKeeperList);
@@ -59,10 +60,8 @@ namespace TestNinja.UnitTests.Mocking
         [Test]
         public void SendStatementEmails_EmailFile_ThrowException()
         {
-            var houseKeeper = _houseKeeperList.FirstOrDefault();
-
-            _mailService.Setup(x => x.EmailFile(houseKeeper.Email, houseKeeper.StatementEmailBody, _fileName,
-                        string.Format("Sandpiper Statement {0:yyyy-MM} {1}", _statementDate, houseKeeper.FullName))).Throws(new Exception());
+            _mailService.Setup(x => x.EmailFile(_housekeeper.Email, _housekeeper.StatementEmailBody, _fileName,
+                        string.Format("Sandpiper Statement {0:yyyy-MM} {1}", _statementDate, _housekeeper.FullName))).Throws(new Exception());
 
             var result = _housekeeperHelper.SendStatementEmails(_statementDate);
 
@@ -72,11 +71,42 @@ namespace TestNinja.UnitTests.Mocking
         [Test]
         public void SendStatementEmails_WhenCalled_GenerateStatements()
         {
-            var houseKeeper = _houseKeeperList.FirstOrDefault();
+            var result = _housekeeperHelper.SendStatementEmails(_statementDate);
+
+            _statementSaver.Verify(x => x.SaveStatement(_housekeeper.Oid, _housekeeper.FullName, _statementDate));
+        }
+
+        [Test]
+        public void SendStatementEmails_HouseKeeperEmailIsNull_ShouldNotGenerateStatements()
+        {
+            _housekeeper.Email = null;
 
             var result = _housekeeperHelper.SendStatementEmails(_statementDate);
 
-            _statementSaver.Verify(x => x.SaveStatement(houseKeeper.Oid, houseKeeper.FullName, _statementDate));
+            _statementSaver.Verify(x => x.SaveStatement(_housekeeper.Oid, _housekeeper.FullName, _statementDate),
+                Times.Never);
+        }
+
+        [Test]
+        public void SendStatementEmails_HouseKeeperEmailIsWhiteSpace_ShouldNotGenerateStatements()
+        {
+            _housekeeper.Email = " ";
+
+            var result = _housekeeperHelper.SendStatementEmails(_statementDate);
+
+            _statementSaver.Verify(x => x.SaveStatement(_housekeeper.Oid, _housekeeper.FullName, _statementDate),
+                Times.Never);
+        }
+
+        [Test]
+        public void SendStatementEmails_HouseKeeperEmailIsEmptyString_ShouldNotGenerateStatements()
+        {
+            _housekeeper.Email = "";
+
+            var result = _housekeeperHelper.SendStatementEmails(_statementDate);
+
+            _statementSaver.Verify(x => x.SaveStatement(_housekeeper.Oid, _housekeeper.FullName, _statementDate),
+                Times.Never);
         }
     }
 }
