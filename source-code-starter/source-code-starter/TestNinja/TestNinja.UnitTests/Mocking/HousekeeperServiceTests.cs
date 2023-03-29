@@ -19,28 +19,27 @@ namespace TestNinja.UnitTests.Mocking
 
         private IQueryable<Housekeeper> _houseKeeperList;
         private HousekeeperService _housekeeperHelper;
-        private DateTime _statementDate;
+        private DateTime _statementDate = new DateTime(2023, 1, 1);
         private string _fileName = "File Testing - 1";
 
         [SetUp]
         public void Setup()
         {
-            _statementDate = new DateTime(2023, 1, 1);
             _houseKeeperRepository = new Mock<IHouseKeeperRepository>();
             _mailService = new Mock<IEmailService>();
             _statementSaver = new Mock<IStatementSaver>();
             _xtraMessageBox = new Mock<IXtraMessageBox>();
+
+            _housekeeperHelper = new HousekeeperService(_houseKeeperRepository.Object,
+                                            _statementSaver.Object,
+                                            _mailService.Object,
+                                            _xtraMessageBox.Object);
 
             _houseKeeperList = new List<Housekeeper>
             {
                 new Housekeeper { Oid = 1, Email="abc@gmail.com", FullName="Mithun Das", StatementEmailBody = "Test - 1" }
             
             }.AsQueryable();
-
-            _housekeeperHelper = new HousekeeperService(_houseKeeperRepository.Object, 
-                                                        _statementSaver.Object, 
-                                                        _mailService.Object, 
-                                                        _xtraMessageBox.Object);
 
             _houseKeeperRepository.Setup(x => x.GetHousekeepers()).Returns(_houseKeeperList);
             _statementSaver.Setup(x => x.SaveStatement(1, "Mithun Das", _statementDate)).Returns(_fileName);
