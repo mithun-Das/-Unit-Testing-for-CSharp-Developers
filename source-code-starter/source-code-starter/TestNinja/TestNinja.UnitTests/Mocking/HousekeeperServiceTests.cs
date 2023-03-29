@@ -20,12 +20,14 @@ namespace TestNinja.UnitTests.Mocking
         private IQueryable<Housekeeper> _houseKeeperList;
         private HousekeeperService _housekeeperHelper;
         private DateTime _statementDate = new DateTime(2023, 1, 1);
-        private readonly string _fileName = "File Testing - 1";
+        private string _fileName;
         private Housekeeper _housekeeper;
 
         [SetUp]
         public void Setup()
         {
+            _fileName = "File Testing - 1";
+
             _houseKeeperRepository = new Mock<IHouseKeeperRepository>();
             _mailService = new Mock<IEmailService>();
             _statementSaver = new Mock<IStatementSaver>();
@@ -45,6 +47,10 @@ namespace TestNinja.UnitTests.Mocking
             _houseKeeperRepository
                 .Setup(x => x.GetHousekeepers())
                 .Returns(_houseKeeperList);
+
+            _statementSaver
+                .Setup(x => x.SaveStatement(1, "Mithun Das", _statementDate))
+                .Returns(() => _fileName);
         }
 
         [Test]
@@ -53,39 +59,24 @@ namespace TestNinja.UnitTests.Mocking
         [TestCase("")]
         public void SendStatementEmails_StatmentFileIsInvalid_ShouldNotSendMail(string fileName)
         {
-            _statementSaver
-                .Setup(x => x.SaveStatement(1, "Mithun Das", _statementDate))
-                .Returns(() => fileName);
+            _fileName = fileName;
 
             _housekeeperHelper.SendStatementEmails(_statementDate);
 
-            _mailService.Verify(x => x.EmailFile(It.IsAny<string>(), 
-                                                It.IsAny<string>(),
-                                                It.IsAny<string>(),
-                                                It.IsAny<string>()),
-                                                Times.Never);
+            VerifyEmailNotSent();
         }
 
         [Test]
         public void SendStatementEmails_StatmentFileIsValid_ShouldSendMail()
         {
-            _statementSaver
-                .Setup(x => x.SaveStatement(1, "Mithun Das", _statementDate))
-                .Returns(_fileName);
-
             _housekeeperHelper.SendStatementEmails(_statementDate);
 
-            _mailService.Verify(x => x.EmailFile(_housekeeper.Email, _housekeeper.StatementEmailBody,
-                _fileName, It.IsAny<string>()));
+            VerifyEmailSent();
         }
 
         [Test]
         public void SendStatementEmails_EmailFile_ThrowException()
         {
-            _statementSaver
-                .Setup(x => x.SaveStatement(1, "Mithun Das", _statementDate))
-                .Returns(_fileName);
-
             _mailService
                 .Setup(x => x.EmailFile(_housekeeper.Email, _housekeeper.StatementEmailBody, _fileName, It.IsAny<string>()))
                 .Throws(new Exception());
@@ -115,6 +106,23 @@ namespace TestNinja.UnitTests.Mocking
 
             _statementSaver.Verify(x => x.SaveStatement(_housekeeper.Oid, _housekeeper.FullName, _statementDate),
                 Times.Never);
+        }
+
+        private void VerifyEmailNotSent()
+        {
+            _mailService.Verify(x => x.EmailFile(It.IsAny<string>(),
+                                    It.IsAny<string>(),
+                                    It.IsAny<string>(),
+                                    It.IsAny<string>()),
+                                    Times.Never);
+        }
+
+        private void VerifyEmailSent()
+        {
+            _mailService.Verify(x => x.EmailFile(_housekeeper.Email,
+                                    _housekeeper.StatementEmailBody,
+                                    _fileName, 
+                                    It.IsAny<string>()));
         }
     }
 }

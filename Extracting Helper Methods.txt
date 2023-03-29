@@ -1,0 +1,12 @@
+
+->             _statementSaver
+                .Setup(x => x.SaveStatement(1, "Mithun Das", _statementDate))
+                .Returns(() => _fileName);
+
+In the last lecture I told you that this Returns method has
+
+two overloads. One that takes an extra value, like a string.
+
+And the other that takes a func, a delegate, a lambda expression.
+
+We use that for lazy evaluation.
