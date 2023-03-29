@@ -77,31 +77,12 @@ namespace TestNinja.UnitTests.Mocking
         }
 
         [Test]
-        public void SendStatementEmails_HouseKeeperEmailIsNull_ShouldNotGenerateStatements()
+        [TestCase(null)]
+        [TestCase(" ")]
+        [TestCase("")]
+        public void SendStatementEmails_HouseKeeperEmail_StatementsGenerationTest(string email)
         {
-            _housekeeper.Email = null;
-
-            var result = _housekeeperHelper.SendStatementEmails(_statementDate);
-
-            _statementSaver.Verify(x => x.SaveStatement(_housekeeper.Oid, _housekeeper.FullName, _statementDate),
-                Times.Never);
-        }
-
-        [Test]
-        public void SendStatementEmails_HouseKeeperEmailIsWhiteSpace_ShouldNotGenerateStatements()
-        {
-            _housekeeper.Email = " ";
-
-            var result = _housekeeperHelper.SendStatementEmails(_statementDate);
-
-            _statementSaver.Verify(x => x.SaveStatement(_housekeeper.Oid, _housekeeper.FullName, _statementDate),
-                Times.Never);
-        }
-
-        [Test]
-        public void SendStatementEmails_HouseKeeperEmailIsEmptyString_ShouldNotGenerateStatements()
-        {
-            _housekeeper.Email = "";
+            _housekeeper.Email = email;
 
             var result = _housekeeperHelper.SendStatementEmails(_statementDate);
 
