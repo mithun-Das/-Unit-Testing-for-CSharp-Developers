@@ -78,12 +78,12 @@ namespace TestNinja.UnitTests.Mocking
         public void SendStatementEmails_EmailFile_ThrowException()
         {
             _mailService
-                .Setup(x => x.EmailFile(_housekeeper.Email, _housekeeper.StatementEmailBody, _fileName, It.IsAny<string>()))
+                .Setup(x => x.EmailFile(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Throws(new Exception());
 
-            var result = _housekeeperHelper.SendStatementEmails(_statementDate);
+            _housekeeperHelper.SendStatementEmails(_statementDate);
 
-            Assert.That(result, Is.False);
+            _xtraMessageBox.Verify(ms => ms.Show(It.IsAny<string>(), It.IsAny<string>(), MessageBoxButtons.OK));
         }
 
         [Test]
